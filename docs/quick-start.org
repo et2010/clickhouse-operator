@@ -1,0 +1,138 @@
+* Prerequisites
+- Operational Kubernetes instance
+- Properly configured =kubectl=
+- =curl=
+
+* ClickHouse Operator Installation
+
+Apply =clickhouse-operator= installation manifest:
+
+#+begin_src shell
+kubectl apply -f ../manifests/operator/clickhouse-operator-install.yaml
+#+end_src
+
+#+RESULTS:
+| customresourcedefinition.apiextensions.k8s.io/clickhouseinstallations.clickhouse.altinity.com         | created |
+| customresourcedefinition.apiextensions.k8s.io/clickhouseinstallationtemplates.clickhouse.altinity.com | created |
+| serviceaccount/clickhouse-operator                                                                    | created |
+| clusterrolebinding.rbac.authorization.k8s.io/clickhouse-operator                                      | created |
+| service/clickhouse-operator-metrics                                                                   | created |
+| configmap/etc-clickhouse-operator-files                                                               | created |
+| configmap/etc-clickhouse-operator-confd-files                                                         | created |
+| configmap/etc-clickhouse-operator-configd-files                                                       | created |
+| configmap/etc-clickhouse-operator-templatesd-files                                                    | created |
+| configmap/etc-clickhouse-operator-usersd-files                                                        | created |
+| deployment.apps/clickhouse-operator                                                                   | created |
+
+#+begin_src shell :results raw :wrap example
+kubectl get all -n kube-system
+#+end_src
+
+#+RESULTS:
+#+begin_example
+NAME                                       READY   STATUS              RESTARTS   AGE
+pod/clickhouse-operator-6499dc984f-jx6pc   0/1     ContainerCreating   0          90s
+pod/coredns-6967fb4995-rcphp               1/1     Running             0          13m
+pod/coredns-6967fb4995-t7879               1/1     Running             0          13m
+pod/etcd-minikube                          1/1     Running             0          12m
+pod/kube-addon-manager-minikube            1/1     Running             0          12m
+pod/kube-apiserver-minikube                1/1     Running             0          12m
+pod/kube-controller-manager-minikube       1/1     Running             0          12m
+pod/kube-proxy-r2nct                       1/1     Running             0          13m
+pod/kube-scheduler-minikube                1/1     Running             0          12m
+pod/kubernetes-dashboard-95564f4f-ptm7h    1/1     Running             0          13m
+pod/storage-provisioner                    1/1     Running             0          13m
+NAME                                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE
+service/clickhouse-operator-metrics   ClusterIP   10.99.211.192   <none>        8888/TCP                 91s
+service/kube-dns                      ClusterIP   10.96.0.10      <none>        53/UDP,53/TCP,9153/TCP   13m
+service/kubernetes-dashboard          ClusterIP   10.96.33.241    <none>        80/TCP                   13m
+NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
+daemonset.apps/kube-proxy   1         1         1       1            1           beta.kubernetes.io/os=linux   13m
+NAME                                   READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/clickhouse-operator    0/1     1            0           90s
+deployment.apps/coredns                2/2     2            2           13m
+deployment.apps/kubernetes-dashboard   1/1     1            1           13m
+NAME                                             DESIRED   CURRENT   READY   AGE
+replicaset.apps/clickhouse-operator-6499dc984f   1         1         0       90s
+replicaset.apps/coredns-6967fb4995               2         2         2       13m
+replicaset.apps/kubernetes-dashboard-95564f4f    1         1         1       13m
+#+end_example
+
+* Examples
+
+Following are some examples to start with:
+
+** Create Custom Namespace
+
+It is a good practice to have all components running in dedicated namespaces.
+Let's run examples in =test= namespace
+
+#+begin_src shell
+kubectl create ns test
+#+end_src
+
+#+RESULTS:
+: namespace/test created
+
+** Trivial Example
+
+This is a trivial [[/home/james/Work/cpnet/clickhouse-operator/docs/examples/01-simple-layout-01-1shard-1repl.yaml][1 shard 1 replica]] example.
+
+*WARNING*: Do not use it for anything other than 'Hello, world!', it does not
+have persistent storage!
+
+#+begin_src shell
+kubectl apply -n test -f ./examples/01-simple-layout-01-1shard-1repl.yaml
+#+end_src
+
+#+RESULTS:
+: clickhouseinstallation.clickhouse.altinity.com/simple-01 unchanged
+
+Installation specification is straightforward and defines 1-replica cluster:
+
+#+begin_example
+apiVersion: "clickhouse.altinity.com/v1"
+kind: "ClickHouseInstallation"
+metadata:
+  name: simple-01
+#+end_example
+
+Once the cluster is created, there are two checks to be made.
+
+#+begin_src shell
+kubectl get pods -n test
+#+end_src
+
+#+RESULTS:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
